@@ -4,7 +4,7 @@ const doubleCp: ComputedProperty = {
   propName: 'doublePrice',
   deps: ['somePrice', 'discount'],
   compute: (props: any) => {
-    return props.somePrice * 2 * props.discount;
+    return props.somePrice * 2 * (props.discount || 1);
   },
 };
 
@@ -18,9 +18,9 @@ describe('ComputedPropertyManager', () => {
     };
     const updated = manager.compute(otherProps);
     expect(updated.doublePrice).toBe(42 * 2 * 0.8);
-    // expect(updated.somePrice, otherProps.somePrice, 'should not mutate other props');
-    // expect(updated.discount, otherProps.discount, 'should not mutate other props');
-    // expect(Object.keys(updated).length, 3, 'should not add to props');
+    expect(updated.somePrice).toBe(otherProps.somePrice);
+    expect(updated.discount).toBe(otherProps.discount);
+    expect(Object.keys(updated)).toHaveLength(3);
   });
 
   it('computes props for any deps props', () => {
@@ -30,8 +30,8 @@ describe('ComputedPropertyManager', () => {
       somePrice: 42,
     };
     const updated = manager.compute(otherProps);
-    // expect(updated.doublePrice, 42 * 2, 'should compute doublePrice');
-    // expect(updated.somePrice, otherProps.somePrice, 'should not mutate other props');
-    // expect(Object.keys(updated).length, 3, 'should not add to props');
+    expect(updated.doublePrice).toBe(42 * 2);
+    expect(updated.somePrice).toBe(otherProps.somePrice);
+    expect(Object.keys(updated)).toHaveLength(2);
   });
 });
