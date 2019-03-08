@@ -9,8 +9,16 @@
     "declarationMap": true,
     "outDir": "./dist",
     "rootDir": "./",
+    "downlevelIteration": true,
     "strict": true,
     "esModuleInterop": true,
     "inlineSourceMap": true
-  }
+  },
+  "include": [
+    "lib/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
