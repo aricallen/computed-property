@@ -8,15 +8,14 @@
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./lib",
     "downlevelIteration": true,
     "strict": true,
     "esModuleInterop": true,
     "inlineSourceMap": true
   },
   "include": [
-    "lib/**/*",
-    "tests/**/*"
+    "lib/**/*"
   ],
   "exclude": [
     "node_modules"

@@ -1,15 +1,3 @@
-// const computedProperties = new Map<string, ComputedProperty>([
-//   [
-//     'exitPrice',
-//     {
-//       deps: ['buffer', 'startPrice'],
-//       compute: (props: any) => {
-//         return modByPercent(+props.startPrice, +props.buffer);
-//       },
-//     },
-//   ],
-// ]);
-
 interface Pojo {
   [key: string]: any;
 }
@@ -20,28 +8,42 @@ export interface ComputedProperty {
   compute: (props: any) => any;
 }
 
-export class ComputedPropertyManager {
+export class Manager {
   private readonly map: Map<string, ComputedProperty>;
 
-  constructor(cps: ComputedProperty[]) {
-    const tuples = cps.map(
-      (cp: ComputedProperty) => [cp.propName, cp] as [string, ComputedProperty]
-    );
-    this.map = new Map(tuples);
+  constructor(cps?: ComputedProperty[]) {
+    if (cps) {
+      const tuples = cps.map(
+        (cp: ComputedProperty) => [cp.propName, cp] as [string, ComputedProperty]
+      );
+      this.map = new Map(tuples);
+    } else {
+      this.map = new Map();
+    }
   }
 
-  update(propName: string, otherProps: any): any {
-    const computedTuples = [...this.map.entries()]
-      .filter(([, cp]) => cp.deps.includes(propName))
-      .map(([key, cp]) => {
-        return [key, cp.compute(otherProps)];
-      });
+  compute(props: Pojo): Pojo {
+    const computedTuples = [...this.map.entries()].map(([key, cp]) => {
+      return [key, cp.compute(props)];
+    });
 
     const computed = computedTuples.reduce((acc: Pojo, curr: any) => {
       const [key, val] = curr;
       acc[key] = val;
       return acc;
     }, {});
-    return { ...otherProps, ...computed };
+    return { ...props, ...computed };
+  }
+
+  add(cp: ComputedProperty): void {
+    this.map.set(cp.propName, cp);
+  }
+
+  clear(): void {
+    this.map.clear();
+  }
+
+  remove(propName: string): void {
+    this.map.delete(propName);
   }
 }
